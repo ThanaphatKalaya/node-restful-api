@@ -4,6 +4,7 @@
 // call the packages we need
 var express    = require('express');        // call express
 var app        = express();                 // define our app using express
+var auth = require('basic-auth')
 var bodyParser = require('body-parser');
 var mysql = require('mysql');
 
@@ -35,7 +36,26 @@ var router = express.Router();              // get an instance of the express Ro
 router.use(function(req, res, next) {
     // do logging
     console.log('%s %s', req.method, req.path);
-    next(); // make sure we go to the next routes and don't stop here
+    var user = auth(req)
+    // => { name: 'something', pass: 'whatever' }
+    if (user == undefined) {
+        res.statusCode = 401
+        res.json({ message: '401 - Access denied. You must be authorized to use our api!' });
+    }else{
+        sql = "SELECT * FROM users WHERE username = '" + user.name + "'";
+        con.query(sql, function (err, result) {
+            if (err) throw err;
+            if (result.length==0) {
+                res.statusCode = 401
+                res.json({ message: '401 - Access denied. User not found!' });
+            }else if (result[0].password != user.pass){
+                res.statusCode = 401
+                res.json({ message: '401 - Access denied. Wrong password!' });
+            }else{
+                next();
+            };
+        });
+    };
 });
 
 // test route to make sure everything is working (accessed at GET http://localhost:8080/api)
@@ -78,6 +98,7 @@ router.route('/bears/:bear_id')
         con.query(sql, function (err, result) {
             if (err) throw err;
             if (result.length==0) {
+                res.statusCode = 404
                 res.json({ message: '404 - Bear not found!' });
             }else{
                 res.json(result);
@@ -93,6 +114,7 @@ router.route('/bears/:bear_id')
         con.query(sql, function (err, result) {
             if (err) throw err;
             if (result.affectedRows==0) {
+                res.statusCode = 404
                 message = '404 - Bear not found!' ;
             }else{
                 message = 'Bear edited! - id: ' + id + ', name: ' + name ;
@@ -108,6 +130,7 @@ router.route('/bears/:bear_id')
         con.query(sql, function (err, result) {
             if (err) throw err;
             if (result.affectedRows==0) {
+                res.statusCode = 404
                 message = '404 - Bear not found!' ;
             }else{
                 message = 'Bear deleted! - id: ' + id ;

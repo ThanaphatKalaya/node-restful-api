@@ -21,15 +21,30 @@ CREATE TABLE IF NOT EXISTS `bears` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` char(50) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
--- Dumping data for table bearschema.bears: ~3 rows (approximately)
+-- Dumping data for table bearschema.bears: ~4 rows (approximately)
 /*!40000 ALTER TABLE `bears` DISABLE KEYS */;
 REPLACE INTO `bears` (`id`, `name`) VALUES
 	(1, 'test0'),
 	(2, 'test1'),
 	(3, 'test2 edited');
 /*!40000 ALTER TABLE `bears` ENABLE KEYS */;
+
+-- Dumping structure for table bearschema.users
+CREATE TABLE IF NOT EXISTS `users` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `username` char(50) NOT NULL,
+  `password` text NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `username` (`username`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+
+-- Dumping data for table bearschema.users: ~1 rows (approximately)
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+REPLACE INTO `users` (`id`, `username`, `password`) VALUES
+	(1, 'user', 'pass');
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
 
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;
