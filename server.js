@@ -7,6 +7,7 @@ var app        = express();                 // define our app using express
 var auth = require('basic-auth')
 var bodyParser = require('body-parser');
 var mysql = require('mysql');
+var https = require('https');
 
 // create database connection
 var con = mysql.createConnection({
@@ -26,7 +27,7 @@ con.connect(function(err) {
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-var port = process.env.PORT || 8080;        // set our port
+var port = process.env.PORT || 80;        // set our port
 
 // ROUTES FOR OUR API
 // =============================================================================
@@ -146,5 +147,12 @@ app.use('/api', router);
 // START THE SERVER
 // =============================================================================
 app.listen(port);
-console.log('Magic happens on port ' + port);
+console.log('Magic http happens on port ' + port);
+
+https.createServer({ 
+    key: fs.readFileSync("/etc/letsencrypt/live/example.com/privkey.pem"),
+    cert: fs.readFileSync("/etc/letsencrypt/live/example.com/fullchain.pem"),
+    ca: fs.readFileSync("/etc/letsencrypt/live/example.com/chain.pem")
+}, app).listen(443);
+console.log('Magic https happens on port 443');
 
